@@ -1,0 +1,10 @@
+{
+  "name": "sparklogs-js-common",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [],
+  "author": "IT Lightning, LLC",
+  "license": "MIT",
+  "homepage": "https://sparklogs.com/"
+}
