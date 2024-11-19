@@ -7,6 +7,7 @@ This repository provides examples how to ingest log data into SparkLogs from var
 ## Examples
 
 - [Node.Js with Winston](nodejs/sparklogs-winston-example/README.md)
+- [Node.Js with Bunyan](nodejs/sparklogs-bunyan-example/README.md)
 
 More examples will be added soon. Stay tuned!
 
