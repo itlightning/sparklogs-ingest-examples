@@ -89,7 +89,7 @@ const logger = winston.createLogger({
 });
 logger.on('error', (error) => {
   console.error('Logger error', error);
-})
+});
 ```
 
 ### 3. Use Winston for logging as usual
