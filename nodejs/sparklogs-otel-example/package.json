@@ -1,0 +1,29 @@
+{
+  "name": "sparklogs-otel-example",
+  "version": "1.0.0",
+  "description": "How to ship logs from a Node.JS app via the OpenTelemetry SDK to SparkLogs over OTLP/HTTP",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "opentelemetry",
+    "otlp",
+    "logging",
+    "sparklogs"
+  ],
+  "author": "IT Lightning, LLC",
+  "license": "MIT",
+  "homepage": "https://sparklogs.com/",
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/api-logs": "^0.55.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.55.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-logs": "^0.55.0",
+    "@opentelemetry/sdk-trace-base": "^1.30.0",
+    "@opentelemetry/semantic-conventions": "^1.32.0"
+  }
+}
