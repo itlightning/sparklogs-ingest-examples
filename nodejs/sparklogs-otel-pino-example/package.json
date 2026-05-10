@@ -1,0 +1,14 @@
+{
+  "name": "sparklogs-otel-pino-example",
+  "version": "1.0.0",
+  "private": true,
+  "main": "app.cjs",
+  "scripts": {
+    "start": "node app.cjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "pino": "^9.6.0",
+    "pino-opentelemetry-transport": "^1.1.0"
+  }
+}

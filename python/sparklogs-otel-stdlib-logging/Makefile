@@ -37,14 +37,19 @@ $(VENV)/.installed: requirements.txt
 run: build
 	$(PY) main.py
 
-mock-test: _check_mock_running build
-	@SPARKLOGS_MARKER="$(MARKER)" $(SPARKLOGS_MOCK_ENV) $(PY) main.py
-	@$(SPARKLOGS_ASSERT_MARKER)
+mock-test: build
+	@$(call VISUAL_EXAMPLE_RUN_BEGIN,$(EXAMPLE_NAME),mock-test); \
+	$(SPARKLOGS_AUTO_MOCK_LIFECYCLE); \
+	  SPARKLOGS_MARKER="$(MARKER)" $(SPARKLOGS_MOCK_ENV) $(PY) main.py && \
+	  $(SPARKLOGS_ASSERT_MARKER) && \
+	$(call VISUAL_EXAMPLE_RUN_END,$(EXAMPLE_NAME))
 
 test: _check_cloud_credentials build
-	@$(SPARKLOGS_RESOLVE_BASE_URI); \
-	  SPARKLOGS_MARKER="$(MARKER)" $(SPARKLOGS_CLOUD_ENV) $(PY) main.py
-	@echo "[$(EXAMPLE_NAME)] sent batch with marker $(MARKER) — verify in SparkLogs UI."
+	@$(call VISUAL_EXAMPLE_RUN_BEGIN,$(EXAMPLE_NAME),test · cloud); \
+	$(SPARKLOGS_RESOLVE_BASE_URI); \
+	  SPARKLOGS_MARKER="$(MARKER)" $(SPARKLOGS_CLOUD_ENV) $(PY) main.py && \
+	echo "[$(EXAMPLE_NAME)] sent batch with marker $(MARKER) — verify in SparkLogs UI." && \
+	$(call VISUAL_EXAMPLE_RUN_END,$(EXAMPLE_NAME))
 
 clean:
 	rm -rf $(VENV) __pycache__

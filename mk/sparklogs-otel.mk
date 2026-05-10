@@ -11,9 +11,7 @@
 #     MOCK_LOG_FILE        = /tmp/sparklogs-otel-mock/collector.stderr
 #     OTEL_LOGS_TIMEOUT_MS = 25000    OTEL_EXPORTER_OTLP_LOGS_TIMEOUT used by examples
 #
-#   Guard targets (.PHONY) — depend on these from your example's targets:
-#     _check_mock_running         curl-pings the mock; fail with a useful
-#                                 message if it isn't reachable.
+#   Guard target (.PHONY) — depend on this from your example's `test` target:
 #     _check_cloud_credentials    require SPARKLOGS_AGENT_ID, SPARKLOGS_AGENT_ACCESS_TOKEN,
 #                                 and at least one of SPARKLOGS_INGEST_BASE_URI or
 #                                 SPARKLOGS_REGION.
@@ -28,6 +26,13 @@
 #                                 below sets.
 #
 #   Shell-snippet helpers (splat them as the head of a recipe shell line):
+#     SPARKLOGS_AUTO_MOCK_LIFECYCLE  curl-checks the mock health endpoint; if the
+#                                    mock is already healthy, no-op (caller owns
+#                                    lifecycle). Otherwise, start the mock and
+#                                    register an EXIT trap to stop it at recipe
+#                                    end. Use as the FIRST link of a single-
+#                                    shell-line mock-test recipe so the trap
+#                                    survives across the run + assert chain.
 #     SPARKLOGS_RESOLVE_BASE_URI  Sets the shell variable SPARKLOGS_INGEST_BASE_URI
 #                                 to a normalized form (with trailing slash).
 #                                 Prefers the user-provided SPARKLOGS_INGEST_BASE_URI;
@@ -45,9 +50,10 @@
 #
 # Typical recipe shape:
 #
-#     mock-test: _check_mock_running build
-#         @SPARKLOGS_MARKER="$(MARKER)" $(SPARKLOGS_MOCK_ENV) $(PY) main.py
-#         @$(SPARKLOGS_ASSERT_MARKER)
+#     mock-test: build
+#         @$(SPARKLOGS_AUTO_MOCK_LIFECYCLE); \
+#           SPARKLOGS_MARKER="$(MARKER)" $(SPARKLOGS_MOCK_ENV) $(PY) main.py && \
+#           $(SPARKLOGS_ASSERT_MARKER)
 #
 #     test: _check_cloud_credentials build
 #         @$(SPARKLOGS_RESOLVE_BASE_URI); \
@@ -65,17 +71,9 @@ MOCK_HEALTH_PORT     ?= 14133
 MOCK_LOG_FILE        ?= /tmp/sparklogs-otel-mock/collector.stderr
 OTEL_LOGS_TIMEOUT_MS ?= 25000
 
-# --- Guard targets ----------------------------------------------------------
+# --- Guard target -----------------------------------------------------------
 
-.PHONY: _check_mock_running _check_cloud_credentials
-
-_check_mock_running:
-	@curl -sf http://localhost:$(MOCK_HEALTH_PORT)/ >/dev/null 2>&1 || { \
-	  echo "ERROR: mock OTLP receiver not reachable on http://localhost:$(MOCK_HEALTH_PORT)/."; \
-	  echo "       Start it with: $(REPO_ROOT)/localenv/otel-mock/start.sh -d"; \
-	  echo "       Or run from the repo root: make mock-start"; \
-	  exit 1; \
-	}
+.PHONY: _check_cloud_credentials
 
 _check_cloud_credentials:
 	@if [ -z "$$SPARKLOGS_AGENT_ID" ] || [ -z "$$SPARKLOGS_AGENT_ACCESS_TOKEN" ]; then \
@@ -93,6 +91,22 @@ _check_cloud_credentials:
 # Each helper expands to a single logical shell line (Make joins backslash-
 # continued lines into one). Splat into a recipe with $(NAME) and chain other
 # commands with `;` or `&&`.
+
+# Detects whether the mock OTLP receiver is already healthy. If yes, no-op —
+# the caller (typically the repo-root Makefile's mock-test orchestrator) owns
+# the lifecycle. If not, start the mock and register an EXIT trap to stop it
+# when the recipe finishes (success or failure). The trap only applies for
+# the duration of the current shell, so callers must use this as the FIRST
+# link of a single-shell-line recipe and chain run + assert with `; \` or
+# `&& \` so they execute under the same trap-bearing shell.
+SPARKLOGS_AUTO_MOCK_LIFECYCLE = \
+if curl -sf --connect-timeout 1 http://localhost:$(MOCK_HEALTH_PORT)/ >/dev/null 2>&1; then \
+  echo "[$(EXAMPLE_NAME)] mock OTLP receiver already running on :$(MOCK_HEALTH_PORT); leaving its lifecycle to whoever started it."; \
+else \
+  echo "[$(EXAMPLE_NAME)] starting local mock OTLP receiver (will stop it at end)."; \
+  "$(REPO_ROOT)/localenv/otel-mock/start.sh" -d || exit 1; \
+  trap '"$(REPO_ROOT)/localenv/otel-mock/stop.sh" || true' EXIT; \
+fi
 
 # Resolves and normalizes SPARKLOGS_INGEST_BASE_URI as a SHELL variable so
 # subsequent commands in the same recipe line can reference it. The trailing
@@ -121,11 +135,14 @@ fi
 #
 # `$$VAR` in these expansions is Make's `$$` → `$` escape; the shell sees `$VAR`.
 # `$(VAR)` is a Make-time substitution; baked into the value.
+#
+# Mock env intentionally omits OTEL_EXPORTER_OTLP_LOGS_COMPRESSION: the literal
+# value "none" is not accepted by all OTLP SDKs (e.g. Rust opentelemetry-otlp),
+# and unset lets each SDK use its default (typically uncompressed for local HTTP).
 
 SPARKLOGS_MOCK_ENV = \
   OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf \
   OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:$(MOCK_OTLP_PORT)/v1/logs \
-  OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=none \
   OTEL_EXPORTER_OTLP_LOGS_TIMEOUT=$(OTEL_LOGS_TIMEOUT_MS)
 
 SPARKLOGS_CLOUD_ENV = \
@@ -134,3 +151,6 @@ SPARKLOGS_CLOUD_ENV = \
   OTEL_EXPORTER_OTLP_LOGS_HEADERS="Authorization=Bearer $${SPARKLOGS_AGENT_ID}:$${SPARKLOGS_AGENT_ACCESS_TOKEN}" \
   OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=gzip \
   OTEL_EXPORTER_OTLP_LOGS_TIMEOUT=$(OTEL_LOGS_TIMEOUT_MS)
+
+# Multi-line stdout banners for mock-test / test (see comments in visual-banner.mk).
+include $(dir $(SPARKLOGS_OTEL_MK))visual-banner.mk

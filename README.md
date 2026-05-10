@@ -4,29 +4,35 @@
 
 This repository provides runnable examples showing how to ship logs to SparkLogs from applications in different languages, using both the **OpenTelemetry SDK over OTLP/HTTP** (recommended) and language-specific transports.
 
+**Windows note:** `make mock-test` runs shell-based mock tooling (`localenv/otel-mock/start.sh`). On Windows, run it inside **WSL**. The cloud `make test` path works from native PowerShell/cmd once `SPARKLOGS_*` credentials are set.
+
 ## Examples
 
 ### OpenTelemetry SDK (recommended)
 
-Each language pairs the OTel SDK with the popular logging library used in that ecosystem. See the matching [SparkLogs documentation page](https://sparklogs.com/docs/ingest/data-sources/languages/opentelemetry-sdks) for the conceptual walkthrough.
+Each language pairs the OTel SDK with the popular logging library used in that ecosystem. See the matching [SparkLogs documentation page](https://sparklogs.com/docs/ingest/data-sources/languages/opentelemetry-sdks) for the conceptual walkthrough and a link matrix.
 
-| Language | Logging library | Status | Path |
-| --- | --- | --- | --- |
-| Python | stdlib `logging` | ✅ Runnable | [`python/sparklogs-otel-stdlib-logging`](python/sparklogs-otel-stdlib-logging/README.md) |
-| Python | structlog | 🟡 Coming soon | `python/sparklogs-otel-structlog` |
-| Node.js | OTLP/HTTP (manual) | ✅ Runnable | [`nodejs/sparklogs-otel-example`](nodejs/sparklogs-otel-example/README.md) |
-| Node.js | Pino | 🟡 Coming soon | `nodejs/sparklogs-otel-pino-example` |
-| Node.js | Winston | 🟡 Coming soon | `nodejs/sparklogs-otel-winston-example` |
-| Node.js | Bunyan | 🟡 Coming soon | `nodejs/sparklogs-otel-bunyan-example` |
-| Java | Logback | 🟡 Coming soon | `java/sparklogs-otel-logback` |
-| Java | Log4j2 | 🟡 Coming soon | `java/sparklogs-otel-log4j2` |
-| .NET | Microsoft.Extensions.Logging | 🟡 Coming soon | `dotnet/sparklogs-otel-mel` |
-| .NET | Serilog | 🟡 Coming soon | `dotnet/sparklogs-otel-serilog` |
-| Go | slog | 🟡 Coming soon | `go/sparklogs-otel-slog` |
-| Go | zap | 🟡 Coming soon | `go/sparklogs-otel-zap` |
-| Ruby | stdlib Logger (beta SDK) | 🟡 Coming soon | `ruby/sparklogs-otel-logger` |
-| PHP | Monolog | 🟡 Coming soon | `php/sparklogs-otel-monolog` |
-| Rust | tracing | 🟡 Coming soon | `rust/sparklogs-otel-tracing` |
+| Language | Logging library | Path |
+| --- | --- | --- |
+| Python | stdlib `logging` | [`python/sparklogs-otel-stdlib-logging`](python/sparklogs-otel-stdlib-logging/README.md) |
+| Python | structlog | [`python/sparklogs-otel-structlog`](python/sparklogs-otel-structlog/README.md) |
+| Python | loguru | [`python/sparklogs-otel-loguru`](python/sparklogs-otel-loguru/README.md) |
+| Node.js | OTLP/HTTP (manual) | [`nodejs/sparklogs-otel-example`](nodejs/sparklogs-otel-example/README.md) |
+| Node.js | Pino | [`nodejs/sparklogs-otel-pino-example`](nodejs/sparklogs-otel-pino-example/README.md) |
+| Node.js | Winston | [`nodejs/sparklogs-otel-winston-example`](nodejs/sparklogs-otel-winston-example/README.md) |
+| Node.js | Bunyan | [`nodejs/sparklogs-otel-bunyan-example`](nodejs/sparklogs-otel-bunyan-example/README.md) |
+| Java | Logback | [`java/sparklogs-otel-logback`](java/sparklogs-otel-logback/README.md) |
+| Java | Log4j2 | [`java/sparklogs-otel-log4j2`](java/sparklogs-otel-log4j2/README.md) |
+| .NET | Microsoft.Extensions.Logging | [`dotnet/sparklogs-otel-mel`](dotnet/sparklogs-otel-mel/README.md) |
+| .NET | Serilog | [`dotnet/sparklogs-otel-serilog`](dotnet/sparklogs-otel-serilog/README.md) |
+| .NET | NLog | [`dotnet/sparklogs-otel-nlog`](dotnet/sparklogs-otel-nlog/README.md) |
+| Go | slog | [`go/sparklogs-otel-slog`](go/sparklogs-otel-slog/README.md) |
+| Go | zap | [`go/sparklogs-otel-zap`](go/sparklogs-otel-zap/README.md) |
+| Go | logrus | [`go/sparklogs-otel-logrus`](go/sparklogs-otel-logrus/README.md) |
+| Go | zerolog | [`go/sparklogs-otel-zerolog`](go/sparklogs-otel-zerolog/README.md) |
+| Ruby | stdlib Logger (beta SDK) | [`ruby/sparklogs-otel-logger`](ruby/sparklogs-otel-logger/README.md) |
+| PHP | Monolog | [`php/sparklogs-otel-monolog`](php/sparklogs-otel-monolog/README.md) |
+| Rust | tracing | [`rust/sparklogs-otel-tracing`](rust/sparklogs-otel-tracing/README.md) |
 
 ### Language-specific transports (legacy / alternative)
 
@@ -37,7 +43,7 @@ Each language pairs the OTel SDK with the popular logging library used in that e
 
 ## QA / orchestration
 
-The repo's top-level `Makefile` runs every example in batch:
+The repo's top-level `Makefile` runs every example in batch. **Java, .NET, Rust, PHP, and Ruby** examples require their usual toolchains (`mvn`, `dotnet`, `cargo`, `composer`, `bundle`). If a tool is missing from `PATH`, `make mock-test` prints `[<lang>] SKIP` for that language and continues (so you can validate Node, Python, and Go on a minimal machine).
 
 ```bash
 # Compile / install deps for every example:
@@ -72,6 +78,8 @@ make test
 If both `SPARKLOGS_INGEST_BASE_URI` and `SPARKLOGS_REGION` are set, the URI wins (the override semantics QA uses). A missing trailing slash is added automatically before joining `/v1/logs`.
 
 The mock OTLP receiver lives in [`localenv/otel-mock`](localenv/otel-mock/README.md) — a tiny [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) that captures OTLP/HTTP payloads locally. Useful for CI verification and for users debugging their own setup ("can I get OTLP working at all?") without involving SparkLogs credentials.
+
+**Mock lifecycle is dual-mode.** Top-level `make mock-test` starts the mock once (via `mock-start`) and shares it across every language's examples for the run, then stops it on exit. Per-example `make mock-test` invocations (e.g. `cd python/sparklogs-otel-stdlib-logging && make mock-test`) detect whether a mock is already running: if yes, they leave the lifecycle to whoever started it; if no, they start one for the duration of that run and stop it at the end. So a single example invocation is self-contained, and a multi-example run reuses one shared mock — no manual `start.sh` step required for the common cases.
 
 Shared per-language env-var construction, credential checks, and URI resolution live in [`mk/sparklogs-otel.mk`](mk/sparklogs-otel.mk), included by each example's Makefile — so adding a new example is mostly "create a directory and a small Makefile."
 

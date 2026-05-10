@@ -73,7 +73,7 @@ wait_for_health() {
             tail -20 "${LOG_DIR}/collector.stderr" >&2
             return 1
         fi
-        if curl -sf "${HEALTH_URL}" >/dev/null 2>&1; then
+        if curl -sf --connect-timeout 1 "${HEALTH_URL}" >/dev/null 2>&1; then
             return 0
         fi
         sleep 0.25
@@ -93,7 +93,11 @@ if [[ "${1-}" == "-d" ]]; then
         rm -f "${LOG_DIR}/collector.pid"
         exit 1
     fi
-    echo "[mock] started detached, pid=${PID}, logs at ${LOG_DIR}/"
+    echo "[mock] mock OTLP receiver started and healthy (pid=${PID}, binary=${BIN})"
+    echo "       OTLP/HTTP endpoint:  http://localhost:${OTLP_PORT}/v1/logs"
+    echo "       health check:        http://localhost:${HEALTH_PORT}/"
+    echo "       captured batches:    ${LOG_DIR}/collector.stderr  (debug exporter writes here)"
+    echo "       stop with:           ${SCRIPT_DIR}/stop.sh  (or 'make mock-stop' from repo root)"
 else
     exec "${BIN}" --config "${SCRIPT_DIR}/config.yaml"
 fi

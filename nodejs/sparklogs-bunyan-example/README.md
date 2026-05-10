@@ -1,6 +1,8 @@
-# Logging Setup with Node.Js Winston and SparkLogs
+# Logging setup with Node.js Bunyan and SparkLogs (Elasticsearch bulk)
 
-This example Node.js application uses the [Bunyan](https://github.com/trentm/node-bunyan) library to ship logs to [SparkLogs](https://sparklogs.com/).
+This example Node.js application uses the [Bunyan](https://github.com/trentm/node-bunyan) library to ship logs to [SparkLogs](https://sparklogs.com/) via the Elasticsearch-compatible bulk API.
+
+For **OpenTelemetry / OTLP** (recommended), see the [OpenTelemetry SDKs guide](https://sparklogs.com/docs/ingest/data-sources/languages/opentelemetry-sdks), the [Node.js ingestion guide](https://sparklogs.com/docs/ingest/data-sources/languages/nodejs), and the runnable [`nodejs/sparklogs-otel-bunyan-example`](../sparklogs-otel-bunyan-example/) project in this repo.
 
 ## Overview
 

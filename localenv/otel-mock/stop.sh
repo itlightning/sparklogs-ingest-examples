@@ -11,6 +11,8 @@ if [[ -f "${PID_FILE}" ]]; then
     if kill -0 "${PID}" 2>/dev/null; then
         kill "${PID}"
         echo "[mock] stopped pid=${PID}"
+    else
+        echo "[mock] already stopped pid=${PID}"
     fi
     rm -f "${PID_FILE}"
 fi

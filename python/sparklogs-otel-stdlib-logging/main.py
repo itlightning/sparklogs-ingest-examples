@@ -40,9 +40,14 @@ MARKER = os.environ.get("SPARKLOGS_MARKER", "sparklogs-ingest-example-marker")
 
 
 def configure_otel() -> LoggerProvider:
+    # Alternative: set these via OTEL_RESOURCE_ATTRIBUTES (e.g.
+    # "service.name=...,service.version=...,deployment.environment=ingest-examples").
+    # In-code form is shown for readability; production often prefers env vars.
     resource = Resource.create(
         {
-            "service.name": os.environ.get("OTEL_SERVICE_NAME", "sparklogs-python-example"),
+            "service.name": os.environ.get(
+                "OTEL_SERVICE_NAME", "sparklogs-example-python-stdlib_logging"
+            ),
             "service.version": "1.0.0",
             "deployment.environment": os.environ.get(
                 "DEPLOYMENT_ENV", "ingest-examples"
@@ -50,6 +55,8 @@ def configure_otel() -> LoggerProvider:
         }
     )
     provider = LoggerProvider(resource=resource)
+    # Use BatchLogRecordProcessor in production; do not use SimpleLogRecordProcessor
+    # outside tests — it exports synchronously and can hurt throughput.
     provider.add_log_record_processor(BatchLogRecordProcessor(OTLPLogExporter()))
     set_logger_provider(provider)
     return provider
@@ -64,19 +71,26 @@ def configure_stdlib_logging(provider: LoggerProvider) -> None:
 
 
 def emit_examples() -> None:
-    log = logging.getLogger("sparklogs.example")
+    log = logging.getLogger("sparklogs.example.python.stdlib_logging")
     pid = os.getpid()
     try:
         otel_sdk_version = importlib.metadata.version("opentelemetry-sdk")
     except importlib.metadata.PackageNotFoundError:
         otel_sdk_version = "unknown"
 
+    base_extra = {
+        "marker": MARKER,
+        "language": "python",
+        "logging_library": "stdlib_logging",
+    }
+
     # Demonstrates: AutoExtract category extraction (-> category=SparkLogsExample)
     # plus key=value pair extraction (-> x.library, x.version).
     log.info(
-        "SparkLogsExample: hello from Python OTel SDK example, library=opentelemetry-sdk version=%s",
+        "SparkLogsExample: hello from Python stdlib logging OTel example "
+        "language=python log_library=stdlib_logging otel_sdk_version=%s",
         otel_sdk_version,
-        extra={"marker": MARKER},
+        extra=base_extra,
     )
 
     # Demonstrates: multi-level category (-> category=SparkLogsExample.Storage),
@@ -85,7 +99,7 @@ def emit_examples() -> None:
     log.warning(
         "SparkLogsExample: Storage: disk usage warning [pid=%d] mount=/dev/sda1 used_pct=92 free_gb=8.4",
         pid,
-        extra={"marker": MARKER},
+        extra=base_extra,
     )
 
     # Demonstrates: multi-level category (-> category=SparkLogsExample.Network),
@@ -100,7 +114,7 @@ def emit_examples() -> None:
             'SparkLogsExample: Network: connection refused to 203.0.113.42 attempt=3'
             ' detail={"endpoint": "/api/orders", "latency_ms": 250}',
             exc_info=True,
-            extra={"marker": MARKER, "request_id": "req-7e2a9f"},
+            extra={**base_extra, "request_id": "req-7e2a9f"},
         )
 
 

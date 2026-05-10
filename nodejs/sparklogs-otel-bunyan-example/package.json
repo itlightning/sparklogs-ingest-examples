@@ -1,0 +1,20 @@
+{
+  "name": "sparklogs-otel-bunyan-example",
+  "version": "1.0.0",
+  "private": true,
+  "main": "app.cjs",
+  "scripts": {
+    "start": "node app.cjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/api-logs": "^0.57.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.57.0",
+    "@opentelemetry/instrumentation": "^0.57.0",
+    "@opentelemetry/instrumentation-bunyan": "^0.46.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-logs": "^0.57.0",
+    "bunyan": "^1.8.15"
+  }
+}

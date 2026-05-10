@@ -1,47 +1,41 @@
-# Logging Setup with the Node.Js OpenTelemetry SDK and SparkLogs
+# SparkLogs Node.js manual OpenTelemetry logs (CommonJS)
 
-This example Node.js application uses the [OpenTelemetry SDK](https://opentelemetry.io/docs/languages/js/) to ship logs natively over OTLP/HTTP to [SparkLogs](https://sparklogs.com/).
+Runnable project for [Node.js ingestion](https://sparklogs.com/docs/ingest/data-sources/languages/nodejs) and the [OpenTelemetry SDKs guide](https://sparklogs.com/docs/ingest/data-sources/languages/opentelemetry-sdks).
 
-## Overview
+This directory uses **CommonJS** (`app.cjs`) so `require()` order matches typical production services. The website walkthrough may show **ESM** for readability — the wiring is the same once packages are loaded.
 
-[OpenTelemetry](https://opentelemetry.io/) is the open, vendor-neutral standard for telemetry data. SparkLogs accepts OpenTelemetry logs natively over OTLP/HTTP — no vendor adapter or custom exporter required. Your instrumentation stays portable: ship the same OTLP stream to SparkLogs today and to any other OTLP-compatible backend tomorrow.
+The app uses `@opentelemetry/api-logs` + `@opentelemetry/sdk-logs` + `@opentelemetry/exporter-logs-otlp-proto` (protobuf over HTTP). **Trace correlation is omitted** until SparkLogs supports traces end-to-end.
 
-This example demonstrates:
+## Quick run (local OTLP mock)
 
-- The `@opentelemetry/exporter-logs-otlp-proto` exporter shipping protobuf-encoded logs over HTTPS.
-- A `Resource` populated with `service.name`, `service.namespace`, `service.instance.id`, `deployment.environment`, and `host.name` — SparkLogs auto-derives the `source`, `service`, and `app` pivot fields from these.
-- Records spanning DEBUG/INFO/WARN/ERROR severities.
-- A record emitted inside an active span so SparkLogs correlates it with `trace_id` and `span_id`.
-- A record with a single-string body — SparkLogs [AutoExtract](https://sparklogs.com/docs/ingest/autoextract/overview) extracts structured fields (timestamps, IPs, key/value pairs) automatically.
-
-## Instructions
-
-### 1. Install NPM packages
+From this directory (with the repo’s mock receiver running — `make mock-start` from the repo root):
 
 ```bash
-npm install
+make mock-test
 ```
 
-### 2. Set credentials and region
+## Run against SparkLogs
+
+Set credentials and region (or a full ingest base URI). The shared [`mk/sparklogs-otel.mk`](../../mk/sparklogs-otel.mk) documents resolution order; typical cloud run:
 
 ```bash
-export CLOUD_LOGGING_AUTH_TOKEN="<AGENT-ID>:<AGENT-PASSWORD>"
-export SPARKLOGS_REGION=us   # or 'eu'
+export SPARKLOGS_REGION=us   # or eu
+export SPARKLOGS_AGENT_ID=<your-agent-id>
+export SPARKLOGS_AGENT_ACCESS_TOKEN=<your-agent-access-token>
+make test
 ```
 
-Override the full ingest URL (e.g., for staging) with `SPARKLOGS_INGEST_URL`.
+For a non-public endpoint, set **`SPARKLOGS_INGEST_BASE_URI`** (wins over **`SPARKLOGS_REGION`** when both are set).
 
-### 3. Run the example
+## What it demonstrates
 
-```bash
-npm start
-```
-
-Within a few seconds, the events appear in SparkLogs with auto-derived `source`, `service`, and `app`, severity coloring, and trace correlation on the span-scoped record.
+- `Resource` with **`service.name`**, **`service.version`**, **`deployment.environment`** — SparkLogs derives **`source`**, **`service`**, and **`app`** pivots from these.
+- Records at INFO / WARN / ERROR via `SeverityNumber` + `severityText`.
+- A single-string body line so SparkLogs [AutoExtract](https://sparklogs.com/docs/ingest/autoextract/overview) can extract structured fields.
 
 ## Tested versions
 
-This example has been verified against the following OpenTelemetry JS package versions. The logs SDK is still in `0.x` upstream — pin minor versions in production until it stabilizes.
+Pin OpenTelemetry JS **logs** packages together while upstream is `0.x`.
 
 | Package | Version |
 | --- | --- |
@@ -49,7 +43,6 @@ This example has been verified against the following OpenTelemetry JS package ve
 | `@opentelemetry/api-logs` | 0.55.0 |
 | `@opentelemetry/exporter-logs-otlp-proto` | 0.55.0 |
 | `@opentelemetry/sdk-logs` | 0.55.0 |
-| `@opentelemetry/sdk-trace-base` | 1.30.1 |
 | `@opentelemetry/resources` | 1.30.1 |
 | `@opentelemetry/semantic-conventions` | 1.40.0 |
 
@@ -57,4 +50,4 @@ This example has been verified against the following OpenTelemetry JS package ve
 
 - [SparkLogs OTLP/HTTP API](https://sparklogs.com/docs/ingest/tools/otlp-http)
 - [OpenTelemetry Logs SDK for JavaScript](https://opentelemetry.io/docs/languages/js/instrumentation/#logs)
-- [OTLP specification](https://opentelemetry.io/docs/specs/otlp/)
+- [Ingest examples on GitHub](https://github.com/sparklogs/sparklogs-ingest-examples/tree/main/nodejs/sparklogs-otel-example) (this directory)

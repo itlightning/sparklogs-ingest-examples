@@ -29,20 +29,52 @@ LANGUAGES := nodejs python java dotnet go ruby php rust
 # ---------------------------------------------------------------------------
 
 .PHONY: build
-build: $(addprefix build-,$(LANGUAGES))
+build:
+	@$(call VISUAL_SUITE_BEGIN,build · all languages); \
+	for lang in $(LANGUAGES); do \
+	  if [ -f $$lang/Makefile ]; then \
+	    $(MAKE) --no-print-directory -C $$lang build || exit 1; \
+	  else \
+	    echo "[skip] $$lang (no Makefile)"; \
+	  fi; \
+	done; \
+	$(call VISUAL_SUITE_END,build)
 
 .PHONY: mock-test
-mock-test: mock-start
-	@trap '$(MAKE) -s mock-stop' EXIT; \
+mock-test:
+	@$(call VISUAL_SUITE_BEGIN,mock-test · OTLP mock · all languages); \
+	$(MAKE) mock-start; \
+	trap '$(MAKE) -s mock-stop' EXIT; \
 	for lang in $(LANGUAGES); do \
-	  $(MAKE) --no-print-directory mock-test-$$lang || exit 1; \
-	done
+	  if [ -f $$lang/Makefile ]; then \
+	    $(MAKE) --no-print-directory -C $$lang mock-test || exit 1; \
+	  else \
+	    echo "[skip] $$lang (no Makefile)"; \
+	  fi; \
+	done; \
+	$(call VISUAL_SUITE_END,mock-test)
 
 .PHONY: test
-test: check-credentials $(addprefix test-,$(LANGUAGES))
+test: check-credentials
+	@$(call VISUAL_SUITE_BEGIN,test · SparkLogs cloud · all languages); \
+	for lang in $(LANGUAGES); do \
+	  if [ -f $$lang/Makefile ]; then \
+	    $(MAKE) --no-print-directory -C $$lang test || exit 1; \
+	  else \
+	    echo "[skip] $$lang (no Makefile)"; \
+	  fi; \
+	done; \
+	$(call VISUAL_SUITE_END,test)
 
 .PHONY: clean
-clean: $(addprefix clean-,$(LANGUAGES))
+clean:
+	@$(call VISUAL_SUITE_BEGIN,clean · all languages); \
+	for lang in $(LANGUAGES); do \
+	  if [ -f $$lang/Makefile ]; then \
+	    $(MAKE) --no-print-directory -C $$lang clean || true; \
+	  fi; \
+	done; \
+	$(call VISUAL_SUITE_END,clean)
 
 # ---------------------------------------------------------------------------
 # Per-language pass-through targets — each language's Makefile must define

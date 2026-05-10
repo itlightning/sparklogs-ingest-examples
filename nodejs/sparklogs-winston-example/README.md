@@ -1,6 +1,8 @@
 # Logging Setup with Node.Js Winston and SparkLogs
 
-This example Node.js application uses the [Winston](https://github.com/winstonjs/winston) library to ship logs to [SparkLogs](https://sparklogs.com/).
+This example Node.js application uses the [Winston](https://github.com/winstonjs/winston) library to ship logs to [SparkLogs](https://sparklogs.com/) via the Elasticsearch-compatible bulk API.
+
+For **OpenTelemetry / OTLP** (recommended), see the [OpenTelemetry SDKs guide](https://sparklogs.com/docs/ingest/data-sources/languages/opentelemetry-sdks), the [Node.js ingestion guide](https://sparklogs.com/docs/ingest/data-sources/languages/nodejs), and the runnable [`nodejs/sparklogs-otel-winston-example`](../sparklogs-otel-winston-example/) project in this repo.
 
 ## Overview
 

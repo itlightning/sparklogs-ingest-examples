@@ -90,6 +90,13 @@ packages/
 *.nupkg
 *.snupkg
 
+# Go — binaries built next to main.go (same basename as directory)
+
+go/sparklogs-otel-slog/sparklogs-otel-slog
+go/sparklogs-otel-zap/sparklogs-otel-zap
+go/sparklogs-otel-logrus/sparklogs-otel-logrus
+go/sparklogs-otel-zerolog/sparklogs-otel-zerolog
+
 # Go
 
 *.exe
