@@ -1,0 +1,43 @@
+# OpenTelemetry Collector configuration used by `make mock-test`.
+#
+# Receives OTLP/HTTP on http://localhost:4318 and writes received log records,
+# in human-readable detail, to the collector's stdout (which start.sh redirects
+# to /tmp/sparklogs-otel-mock/collector.stdout). Each example's mock-test
+# target greps that file for a unique marker to verify the batch was received.
+#
+# Components used here are in the **core** OpenTelemetry Collector
+# distribution, so this config works with both `otelcol` and `otelcol-contrib`
+# without needing the contrib distro's `file` exporter.
+
+# Non-default ports (14318 / 14133, default-OTLP + 10000) are intentional:
+# many dev machines already have an otelcol or similar running on 4318 /
+# 13133 / 8888, and we want this mock to coexist with it. Each example's
+# mock-test target points OTEL_EXPORTER_OTLP_LOGS_ENDPOINT at port 14318.
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:14318
+
+exporters:
+  debug:
+    verbosity: detailed
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:14133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [debug]
+  telemetry:
+    # Disable the default Prometheus metrics endpoint (otherwise binds :8888
+    # and collides if anything else on the host is using that port).
+    metrics:
+      level: none
+    logs:
+      level: info
