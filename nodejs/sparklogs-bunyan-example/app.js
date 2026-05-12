@@ -1,8 +1,25 @@
 import bunyan from 'bunyan';
 import createESStream from 'bunyan-elasticsearch-bulk';
 import { performStressTest } from '../sparklogs-js-common/stress.js';
+import {
+  resolveIngestBaseUri,
+  resolveEs8Endpoint,
+  resolveAgentCredentials,
+} from '../sparklogs-js-common/endpoint.js';
 
 // ========================== SETUP TRANSPORT AND LOGGER ==========================
+
+// SparkLogs config from the standard env vars:
+//   SPARKLOGS_REGION             (us|eu)   — public-cloud shortcut, OR
+//   SPARKLOGS_INGEST_BASE_URI              — explicit base URI (QA / dev-cloud / on-prem)
+//   SPARKLOGS_AGENT_ID
+//   SPARKLOGS_AGENT_ACCESS_TOKEN
+//
+// resolveEs8Endpoint rewrites the host to the `es8.` subdomain that serves the
+// Elasticsearch-bulk-compat endpoint — necessary because @elastic/elasticsearch
+// v8 doesn't accept a path on the node URL (see endpoint.js for details).
+const node = resolveEs8Endpoint(resolveIngestBaseUri());
+const { bearer } = resolveAgentCredentials();
 
 // The Bunyan stream that will ship logs to the SparkLogs cloud
 const cloudLoggingStream = createESStream({
@@ -10,12 +27,8 @@ const cloudLoggingStream = createESStream({
   interval: 2000, // how often to flush pending logs in milliseconds
   limit: 4000,
   // -- Elasticsearch client options
-  // Customize the region from us to eu if needed
-  node: 'https://es8.ingest-us.engine.sparklogs.app/',
-  auth: {
-    //bearer: "<AGENT-ID>:<AGENT-PASSWORD>",
-    bearer: process.env.CLOUD_LOGGING_AUTH_TOKEN,
-  },
+  node,
+  auth: { bearer },
   headers: {
     "X-Timezone": Intl.DateTimeFormat().resolvedOptions().timeZone,
     // Map Bunyan numeric levels to standard textual severity levels

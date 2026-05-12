@@ -2,8 +2,19 @@ using Serilog;
 using Serilog.Sinks.OpenTelemetry;
 
 // Alternative: set resource attributes via OTEL_RESOURCE_ATTRIBUTES.
+//
+// Serilog.Sinks.OpenTelemetry has its own option object and does NOT
+// auto-read the OTEL_EXPORTER_OTLP_* env vars the way the OpenTelemetry SDK
+// MEL exporter does. We read endpoint / auth header ourselves and pass them
+// into the sink options so this works the same way regardless of which
+// SDK / sink combination is in play.
 var marker = Environment.GetEnvironmentVariable("SPARKLOGS_MARKER")
              ?? "sparklogs-ingest-example-marker";
+var endpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_ENDPOINT")
+               ?? Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT")
+               ?? "http://localhost:4318/v1/logs";
+var headersEnv = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_HEADERS")
+                 ?? Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_HEADERS");
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -12,13 +23,23 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.OpenTelemetry(options =>
     {
+        options.Endpoint = endpoint;
+        options.Protocol = OtlpProtocol.HttpProtobuf;
         options.ResourceAttributes = new Dictionary<string, object>
         {
             ["service.name"] = "sparklogs-example-dotnet-serilog",
             ["service.version"] = "1.0.0",
             ["deployment.environment"] = "ingest-examples",
         };
-        options.Protocol = OtlpProtocol.HttpProtobuf;
+        if (!string.IsNullOrEmpty(headersEnv))
+        {
+            // Parse "k1=v1,k2=v2" form into the sink's header dictionary.
+            options.Headers = headersEnv
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(pair => pair.Split('=', 2))
+                .Where(parts => parts.Length == 2)
+                .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim());
+        }
     })
     .CreateLogger();
 

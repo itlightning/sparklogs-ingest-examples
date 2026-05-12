@@ -12,9 +12,7 @@
   "license": "MIT",
   "homepage": "https://sparklogs.com/",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.15.2",
     "bunyan": "^1.8.15",
-    "bunyan-elasticsearch-bulk": "^2.0.10",
-    "elasticsearch": "^16.7.3"
+    "bunyan-elasticsearch-bulk": "^2.0.10"
   }
 }

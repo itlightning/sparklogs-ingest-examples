@@ -13,11 +13,17 @@ build:
 run: build
 	java -jar $(JAR)
 
+# OTEL_LOGS_EXPORTER=otlp required by autoconfigure for logs pipeline.
+# OTEL_TRACES_EXPORTER=none / OTEL_METRICS_EXPORTER=none disable the other
+# signals — SparkLogs is logs-only today, and leaving them at the default
+# (otlp) would make autoconfigure try to initialize three pipelines.
 mock-test: build
 	@$(call VISUAL_EXAMPLE_RUN_BEGIN,$(EXAMPLE_NAME),mock-test); \
 	$(SPARKLOGS_AUTO_MOCK_LIFECYCLE); \
 	  SPARKLOGS_MARKER="$(MARKER)" \
 	  OTEL_LOGS_EXPORTER=otlp \
+	  OTEL_TRACES_EXPORTER=none \
+	  OTEL_METRICS_EXPORTER=none \
 	  OTEL_SERVICE_NAME=sparklogs-example-java-log4j2 \
 	  OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=ingest-examples \
 	  $(SPARKLOGS_MOCK_ENV) java -jar $(JAR) && \
@@ -29,6 +35,8 @@ test: _check_cloud_credentials build
 	$(SPARKLOGS_RESOLVE_BASE_URI); \
 	  SPARKLOGS_MARKER="$(MARKER)" \
 	  OTEL_LOGS_EXPORTER=otlp \
+	  OTEL_TRACES_EXPORTER=none \
+	  OTEL_METRICS_EXPORTER=none \
 	  OTEL_SERVICE_NAME=sparklogs-example-java-log4j2 \
 	  OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=ingest-examples \
 	  $(SPARKLOGS_CLOUD_ENV) java -jar $(JAR) && \

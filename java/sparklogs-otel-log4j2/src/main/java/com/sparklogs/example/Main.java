@@ -28,6 +28,10 @@ public final class Main {
         "SparkLogsExample: Network: connection refused to 203.0.113.42 attempt=3 detail={\"endpoint\": \"/api/orders\", \"latency_ms\": 250}",
         new RuntimeException("simulated failure"));
 
-    sdk.getSdkLoggerProvider().shutdown();
+    // close() blocks up to ~10s for the BatchLogRecordProcessor to drain its
+    // queue and complete the in-flight export. shutdown() alone is async
+    // (returns a CompletableResultCode we don't await), so main() returning
+    // immediately after it would let the JVM exit before the batch leaves.
+    sdk.close();
   }
 }

@@ -8,7 +8,7 @@
 require 'logger'
 require 'opentelemetry/sdk'
 require 'opentelemetry-logs-sdk'
-require 'opentelemetry/exporter/otlp/logs'
+require 'opentelemetry/exporter/otlp_logs'
 
 marker = ENV.fetch('SPARKLOGS_MARKER', 'sparklogs-ingest-example-marker')
 

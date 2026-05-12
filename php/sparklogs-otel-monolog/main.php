@@ -14,29 +14,30 @@ require __DIR__ . '/vendor/autoload.php';
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use OpenTelemetry\API\Common\Time\Clock;
 use OpenTelemetry\Contrib\Logs\Monolog\Handler as OtelMonologHandler;
 use OpenTelemetry\SDK\Common\Attribute\Attributes;
 use OpenTelemetry\SDK\Logs\LoggerProvider;
 use OpenTelemetry\SDK\Logs\Processor\BatchLogRecordProcessor;
 use OpenTelemetry\SDK\Resource\ResourceInfo;
-use OpenTelemetry\Contrib\Otlp\LogsExporter;
+use OpenTelemetry\Contrib\Otlp\LogsExporterFactory;
 use OpenTelemetry\SemConv\ResourceAttributes;
 
 $marker = getenv('SPARKLOGS_MARKER') ?: 'sparklogs-ingest-example-marker';
 
-// Alternative: set service.name / service.version / deployment.environment via OTEL_RESOURCE_ATTRIBUTES.
+// Alternative: set service.name / service.version / deployment.environment.name via OTEL_RESOURCE_ATTRIBUTES.
 $resource = ResourceInfo::create(Attributes::create([
     ResourceAttributes::SERVICE_NAME => 'sparklogs-example-php-monolog',
     ResourceAttributes::SERVICE_VERSION => '1.0.0',
-    ResourceAttributes::DEPLOYMENT_ENVIRONMENT => 'ingest-examples',
+    ResourceAttributes::DEPLOYMENT_ENVIRONMENT_NAME => 'ingest-examples',
 ]));
 
-$exporter = LogsExporter::create();
+$exporter = (new LogsExporterFactory())->create();
 
 // BatchLogRecordProcessor is production-correct; avoid SimpleLogRecordProcessor outside tests.
 $loggerProvider = LoggerProvider::builder()
     ->setResource($resource)
-    ->addLogRecordProcessor(new BatchLogRecordProcessor($exporter))
+    ->addLogRecordProcessor(new BatchLogRecordProcessor($exporter, Clock::getDefault()))
     ->build();
 
 $otelHandler = new OtelMonologHandler($loggerProvider, Level::Info, true);

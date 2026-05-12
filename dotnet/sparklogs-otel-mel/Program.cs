@@ -1,31 +1,45 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 
 // Alternative: set service.name / service.version / deployment.environment via
 // OTEL_RESOURCE_ATTRIBUTES instead of AddService/AddAttributes below.
-var builder = Host.CreateApplicationBuilder(args);
-builder.Logging.ClearProviders();
-builder.Logging.AddOpenTelemetry(options =>
-{
-    options.SetResourceBuilder(ResourceBuilder.CreateDefault()
-        .AddService("sparklogs-example-dotnet-mel", "1.0.0")
-        .AddAttributes(new Dictionary<string, object>
-        {
-            ["deployment.environment"] = "ingest-examples",
-        }));
-    options.AddOtlpExporter();
-    options.IncludeFormattedMessage = true;
-    options.IncludeScopes = true;
-    options.ParseStateValues = true;
-});
-builder.Logging.SetMinimumLevel(LogLevel.Information);
+//
+// Note on OTLP export configuration: when constructing a LoggerFactory
+// directly (no host / no DI configuration), the no-args AddOtlpExporter()
+// overload does not reliably pick up `OTEL_EXPORTER_OTLP_LOGS_*` env vars
+// because OtlpExporterOptions is normally bound from IConfiguration. We read
+// the endpoint and protocol ourselves so this works the same way regardless
+// of how the program is launched.
 
-await using var host = builder.Build();
-var log = host.Services.GetRequiredService<ILoggerFactory>()
-    .CreateLogger("sparklogs.example.dotnet.mel");
+var endpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_ENDPOINT")
+               ?? Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT")
+               ?? "http://localhost:4318/v1/logs";
+
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddOpenTelemetry(options =>
+    {
+        options.SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService("sparklogs-example-dotnet-mel", "1.0.0")
+            .AddAttributes(new Dictionary<string, object>
+            {
+                ["deployment.environment"] = "ingest-examples",
+            }));
+        options.AddOtlpExporter(otlp =>
+        {
+            otlp.Endpoint = new Uri(endpoint);
+            otlp.Protocol = OtlpExportProtocol.HttpProtobuf;
+        });
+        options.IncludeFormattedMessage = true;
+        options.IncludeScopes = true;
+        options.ParseStateValues = true;
+    });
+    builder.SetMinimumLevel(LogLevel.Information);
+});
+
+var log = loggerFactory.CreateLogger("sparklogs.example.dotnet.mel");
 
 var marker = Environment.GetEnvironmentVariable("SPARKLOGS_MARKER")
              ?? "sparklogs-ingest-example-marker";
@@ -49,4 +63,5 @@ using (log.BeginScope(new Dictionary<string, object>
         "req-7e2a9f");
 }
 
-await host.StopAsync();
+// `using` on the LoggerFactory above will dispose it (and the OTel provider)
+// when the program exits, synchronously flushing the batch processor.
