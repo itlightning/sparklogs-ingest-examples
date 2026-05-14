@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sparklogs</groupId>
+  <artifactId>sparklogs-otel-log4j2</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <name>sparklogs-otel-log4j2</name>
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-bom</artifactId>
+        <version>1.49.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-bom-alpha</artifactId>
+        <version>1.49.0-alpha</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!--
+        Manages versions for io.opentelemetry.instrumentation:* artifacts
+        (logback appender, log4j appender, etc.). Tracked separately from the
+        SDK BOMs above; instrumentation releases on its own 2.x cadence.
+      -->
+      <dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-instrumentation-bom-alpha</artifactId>
+        <version>2.16.0-alpha</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
+    </dependency>
+    <!-- OTLP exporter must be on the classpath for autoconfigure to wire up
+         the logs pipeline (the Makefile sets OTEL_LOGS_EXPORTER=otlp). -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-exporter-otlp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry.instrumentation</groupId>
+      <artifactId>opentelemetry-log4j-appender-2.17</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.25.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.25.4</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <release>17</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <!--
+          Log4j2 uses a private plugin registry (META-INF/.../Log4j2Plugins.dat)
+          that the standard ServicesResourceTransformer can't merge. Without
+          this transformer, only one Log4j2Plugins.dat survives shading and
+          you lose the stdlib pattern converters (%d, %level, %logger, etc.)
+          plus any other appenders/layouts beyond the OpenTelemetry one.
+        -->
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-transform-maven-shade-plugin-extensions</artifactId>
+            <version>0.2.0</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.sparklogs.example.Main</mainClass>
+                </transformer>
+                <!--
+                  Merge META-INF/services/* from all bundled JARs. Required so
+                  the OpenTelemetry SDK's ServiceLoader-based exporter and
+                  configurer discovery sees every contributor (otherwise the
+                  OTLP exporter goes silently undiscovered in the fat jar).
+                -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <!-- Merge log4j2 plugin caches across all bundled JARs. -->
+                <transformer implementation="org.apache.logging.log4j.maven.plugins.shade.transformer.Log4j2PluginCacheFileTransformer"/>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

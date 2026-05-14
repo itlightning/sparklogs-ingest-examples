@@ -1,0 +1,14 @@
+source 'https://rubygems.org'
+
+# Target supporting Ruby 3.1+
+#
+# Newer gem releases (opentelemetry-sdk 1.11+, opentelemetry-logs-sdk 0.5+,
+# opentelemetry-exporter-otlp-logs 0.4+, opentelemetry-logs-api 0.3+) raise
+# the floor to Ruby 3.3. If you have Ruby 3.3+ available, you can drop the
+# pessimistic upper bounds (the `< X.Y` constraints) to track latest.
+ruby '>= 3.1.0'
+
+gem 'opentelemetry-sdk', '>= 1.4', '< 1.11'
+gem 'opentelemetry-logs-api', '~> 0.2.0'
+gem 'opentelemetry-logs-sdk', '~> 0.4.0'
+gem 'opentelemetry-exporter-otlp-logs', '~> 0.3.0'

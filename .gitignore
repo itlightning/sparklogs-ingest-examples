@@ -1,5 +1,139 @@
-# Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
+# Cross-language
+
 .env
+.env.*
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# Node.js
+
+node_modules/
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+pnpm-debug.log*
+.pnp.*
+.npm/
+.yarn/
+dist/
+.parcel-cache/
+
+# Python
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+*.egg
+*.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+build/
+wheels/
+
+# Java (Maven + Gradle)
+
+target/
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+out/
+*.class
+*.jar
+*.war
+*.ear
+.classpath
+.project
+.settings/
+.factorypath
+hs_err_pid*
+replay_pid*
+
+# .NET
+
+bin/
+obj/
+*.user
+*.suo
+.vs/
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Tt]est[Rr]esult*/
+packages/
+*.nupkg
+*.snupkg
+
+# Go — binaries built next to main.go (same basename as directory)
+
+go/sparklogs-otel-slog/sparklogs-otel-slog
+go/sparklogs-otel-zap/sparklogs-otel-zap
+go/sparklogs-otel-logrus/sparklogs-otel-logrus
+go/sparklogs-otel-zerolog/sparklogs-otel-zerolog
+
+# Go
+
+*.exe
+*.exe~
+*.dll
+*.test
+*.out
+go.work.sum
+coverage.out
+coverage.html
+vendor/
+
+# Ruby
+
+.bundle/
+/vendor/bundle/
+*.gem
+.rspec_status
+log/
+tmp/
+.byebug_history
+
+# PHP
+
+/vendor/
+composer.phar
+.phpunit.result.cache
+
+# Rust
+
+target/
+Cargo.lock.bak
+**/*.rs.bk
+
+# Local mock receiver runtime artifacts (when invoked outside /tmp)
+
+sparklogs-otel-mock/
+collector.pid
+collector.stdout
+collector.stderr
