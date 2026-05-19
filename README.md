@@ -4,6 +4,8 @@
 
 This repository provides runnable examples showing how to ship logs to SparkLogs from applications in different languages, using both the **OpenTelemetry SDK over OTLP/HTTP** (recommended) and language-specific transports.
 
+Set **`SPARKLOGS_REGION`** to your workspace's product region code (for example **`us`**, **`eu`**, **`ca`**, **`au`**, or **`uk`**); examples build ingest endpoints from that value.
+
 **Windows note:** `make mock-test` runs shell-based mock tooling (`localenv/otel-mock/start.sh`). On Windows, run it inside **WSL**. The cloud `make test` path works from native PowerShell/cmd once `SPARKLOGS_*` credentials are set.
 
 ## Examples
