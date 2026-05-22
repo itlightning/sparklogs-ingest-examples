@@ -17,7 +17,7 @@ For setup details and full guidance, see the [Node.js ingestion guide](https://s
 This example uses the same SparkLogs env vars as the OTel Node.js examples in this repo:
 
 ```bash
-# Public cloud — pick one of "us" or "eu"
+# Public cloud — use a valid region code like us or eu or ...
 $ export SPARKLOGS_REGION="us"
 # ...or, for QA / dev-cloud / on-prem, set an explicit base URI instead:
 # $ export SPARKLOGS_INGEST_BASE_URI="https://es8.ingest-us.engine.sparklogs.app/"

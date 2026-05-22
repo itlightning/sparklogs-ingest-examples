@@ -57,7 +57,7 @@ make mock-test
 
 # Run every example against real SparkLogs and emit a marker payload that QA
 # can confirm via the SparkLogs query API:
-export SPARKLOGS_REGION=us                       # or eu — picks the public ingest endpoint
+export SPARKLOGS_REGION=us                       # or another valid region code
 export SPARKLOGS_AGENT_ID=<your-agent-id>
 export SPARKLOGS_AGENT_ACCESS_TOKEN=<your-agent-token>
 make test

@@ -29,7 +29,7 @@ export function resolveIngestBaseUri(env = process.env) {
   }
   throw new Error(
     "Set either SPARKLOGS_INGEST_BASE_URI (e.g. https://ingest-us.engine.sparklogs.app/) " +
-    "or SPARKLOGS_REGION (us|eu)."
+    "or SPARKLOGS_REGION (e.g. us|eu|...)."
   );
 }
 
@@ -44,6 +44,7 @@ export function resolveIngestBaseUri(env = process.env) {
  * This helper rewrites a standard SparkLogs ingest base URI to that host:
  *
  *   https://ingest-us.engine.sparklogs.app/  →  https://es8.ingest-us.engine.sparklogs.app/
+ *   (replace `us` with your product region code)
  *
  * Localhost / IP-based hosts (QA setups where the user controls routing) are
  * passed through unchanged — they're assumed to expose the bulk API at the

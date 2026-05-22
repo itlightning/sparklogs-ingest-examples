@@ -82,7 +82,7 @@ _check_cloud_credentials:
 	fi
 	@if [ -z "$$SPARKLOGS_INGEST_BASE_URI" ] && [ -z "$$SPARKLOGS_REGION" ]; then \
 	  echo "ERROR: set either SPARKLOGS_INGEST_BASE_URI (e.g. https://ingest-us.engine.sparklogs.app/)"; \
-	  echo "       or SPARKLOGS_REGION (us|eu) before 'make test'."; \
+	  echo "       or SPARKLOGS_REGION (e.g. us|eu|...) before 'make test'."; \
 	  exit 1; \
 	fi
 

@@ -3,9 +3,13 @@
 Sends one batch of log records to whatever endpoint OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
 points at, then flushes and exits.
 
-Run:
+Run (prefer `make test` in this directory — it sets OTLP env from SPARKLOGS_REGION):
+    export SPARKLOGS_REGION=us   # or another valid region code
+    make test
+
+Or manually:
     OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf \
-    OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="https://ingest-us.engine.sparklogs.app/v1/logs" \
+    OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="https://ingest-<region>.engine.sparklogs.app/v1/logs" \
     OTEL_EXPORTER_OTLP_LOGS_HEADERS="Authorization=Bearer <AGENT-ID>:<AGENT-ACCESS-TOKEN>" \
     OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=gzip \
     OTEL_EXPORTER_OTLP_LOGS_TIMEOUT=25000 \

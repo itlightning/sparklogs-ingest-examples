@@ -12,7 +12,7 @@ For the corresponding documentation page, see [SparkLogs Python ingestion guide]
 ## Run against real SparkLogs
 
 ```bash
-export SPARKLOGS_REGION=us           # or eu
+export SPARKLOGS_REGION=us           # or another valid region code
 export SPARKLOGS_AGENT_ID=...        # from Configure → Agents
 export SPARKLOGS_AGENT_ACCESS_TOKEN=...
 

@@ -11,7 +11,7 @@
 #                       and one of:
 #                         SPARKLOGS_INGEST_BASE_URI  (e.g. https://ingest-us.engine.sparklogs.app/
 #                                                    or http://localhost:8080/ for QA / dev-cloud)
-#                         SPARKLOGS_REGION           (us | eu — public cloud shortcut)
+#                         SPARKLOGS_REGION           (product region code, e.g. us|eu|...)
 #                       Each example logs a known marker payload; QA can
 #                       confirm ingestion via the SparkLogs query API.
 #   make test-<lang>  - same as `make test` but scoped to one language.
