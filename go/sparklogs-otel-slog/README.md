@@ -15,7 +15,7 @@ make mock-test
 ## Run (cloud)
 
 ```bash
-export SPARKLOGS_REGION=us
+export SPARKLOGS_REGION=us   # or another valid region code
 export SPARKLOGS_AGENT_ID=...
 export SPARKLOGS_AGENT_ACCESS_TOKEN=...
 make test

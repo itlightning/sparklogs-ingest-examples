@@ -10,7 +10,7 @@ import {
 // ========================== SETUP TRANSPORT AND LOGGER ==========================
 
 // SparkLogs config from the standard env vars:
-//   SPARKLOGS_REGION             (us|eu)   — public-cloud shortcut, OR
+//   SPARKLOGS_REGION             (valid region code, e.g. us|eu|...) — public-cloud shortcut, OR
 //   SPARKLOGS_INGEST_BASE_URI              — explicit base URI (QA / dev-cloud / on-prem)
 //   SPARKLOGS_AGENT_ID
 //   SPARKLOGS_AGENT_ACCESS_TOKEN

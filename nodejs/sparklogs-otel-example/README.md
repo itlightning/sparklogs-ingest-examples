@@ -19,7 +19,7 @@ make mock-test
 Set credentials and region (or a full ingest base URI). The shared [`mk/sparklogs-otel.mk`](../../mk/sparklogs-otel.mk) documents resolution order; typical cloud run:
 
 ```bash
-export SPARKLOGS_REGION=us   # or eu
+export SPARKLOGS_REGION=us   # or another valid region code
 export SPARKLOGS_AGENT_ID=<your-agent-id>
 export SPARKLOGS_AGENT_ACCESS_TOKEN=<your-agent-access-token>
 make test
