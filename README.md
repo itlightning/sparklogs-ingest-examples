@@ -58,8 +58,8 @@ make mock-test
 # Run every example against real SparkLogs and emit a marker payload that QA
 # can confirm via the SparkLogs query API:
 export SPARKLOGS_REGION=us                       # or another valid region code
-export SPARKLOGS_INGEST_KEY_ID=<your-agent-id>
-export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=<your-agent-token>
+export SPARKLOGS_INGEST_KEY_ID=<your-ingest-key-id>
+export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=<your-ingest-key-access-token>
 make test
 
 # Or scope to one language:

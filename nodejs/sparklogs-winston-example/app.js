@@ -6,7 +6,7 @@ import { performStressTest } from '../sparklogs-js-common/stress.js';
 import {
   resolveIngestBaseUri,
   resolveEs8Endpoint,
-  resolveAgentCredentials,
+  resolveIngestKeyCredentials,
 } from '../sparklogs-js-common/endpoint.js';
 
 // ========================== SETUP TRANSPORT AND LOGGER ==========================
@@ -21,7 +21,7 @@ import {
 // Elasticsearch-bulk-compat endpoint — necessary because @elastic/elasticsearch
 // v8 doesn't accept a path on the node URL (see endpoint.js for details).
 const node = resolveEs8Endpoint(resolveIngestBaseUri());
-const { bearer } = resolveAgentCredentials();
+const { bearer } = resolveIngestKeyCredentials();
 
 // Uses the microseconds part of the timestamp to ensure events are ordered properly for events logged on the same millisecond
 let logicalTimeCounter = 0, logicalTimeLastMs = ""

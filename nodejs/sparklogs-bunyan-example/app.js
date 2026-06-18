@@ -4,7 +4,7 @@ import { performStressTest } from '../sparklogs-js-common/stress.js';
 import {
   resolveIngestBaseUri,
   resolveEs8Endpoint,
-  resolveAgentCredentials,
+  resolveIngestKeyCredentials,
 } from '../sparklogs-js-common/endpoint.js';
 
 // ========================== SETUP TRANSPORT AND LOGGER ==========================
@@ -19,7 +19,7 @@ import {
 // Elasticsearch-bulk-compat endpoint — necessary because @elastic/elasticsearch
 // v8 doesn't accept a path on the node URL (see endpoint.js for details).
 const node = resolveEs8Endpoint(resolveIngestBaseUri());
-const { bearer } = resolveAgentCredentials();
+const { bearer } = resolveIngestKeyCredentials();
 
 // The Bunyan stream that will ship logs to the SparkLogs cloud
 const cloudLoggingStream = createESStream({

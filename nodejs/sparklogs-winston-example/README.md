@@ -28,4 +28,4 @@ $ npm install
 $ node app.js
 ```
 
-View or create an agent in the SparkLogs app under **Configure → Agents**.
+View or create an Ingest Key in the SparkLogs app under **Configure → Ingest Keys**.

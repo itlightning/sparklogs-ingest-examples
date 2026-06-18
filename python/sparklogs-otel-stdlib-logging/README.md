@@ -7,13 +7,13 @@ For the corresponding documentation page, see [SparkLogs Python ingestion guide]
 ## Prerequisites
 
 - Python 3.9+
-- A SparkLogs account with at least one agent provisioned (Configure → Agents in the SparkLogs app)
+- A SparkLogs account with at least one Ingest Key provisioned (Configure → Ingest Keys in the SparkLogs app)
 
 ## Run against real SparkLogs
 
 ```bash
 export SPARKLOGS_REGION=us           # or another valid region code
-export SPARKLOGS_INGEST_KEY_ID=...        # from Configure → Agents
+export SPARKLOGS_INGEST_KEY_ID=...        # from Configure → Ingest Keys
 export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=...
 
 make test

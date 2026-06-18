@@ -69,7 +69,7 @@ export function resolveEs8Endpoint(baseUri) {
 }
 
 /**
- * Read the SparkLogs agent credentials from env. Returns the bearer-token
+ * Read the SparkLogs Ingest Key credentials from env. Returns the bearer-token
  * string that the @elastic/elasticsearch / bunyan-elasticsearch-bulk clients
  * accept via their `auth.bearer` option (`<id>:<access-token>` form).
  *
@@ -78,13 +78,13 @@ export function resolveEs8Endpoint(baseUri) {
  * @param {NodeJS.ProcessEnv} [env=process.env]
  * @returns {{ id: string, token: string, bearer: string }}
  */
-export function resolveAgentCredentials(env = process.env) {
+export function resolveIngestKeyCredentials(env = process.env) {
   const id = env.SPARKLOGS_INGEST_KEY_ID;
   const token = env.SPARKLOGS_INGEST_KEY_ACCESS_TOKEN;
   if (!id || !token) {
     throw new Error(
       "Set SPARKLOGS_INGEST_KEY_ID and SPARKLOGS_INGEST_KEY_ACCESS_TOKEN before running. " +
-      "View or create an agent in the SparkLogs app under Configure → Agents."
+      "View or create an Ingest Key in the SparkLogs app under Configure → Ingest Keys."
     );
   }
   return { id, token, bearer: `${id}:${token}` };
