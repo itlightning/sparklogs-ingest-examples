@@ -10,7 +10,7 @@ Run (prefer `make test` in this directory — it sets OTLP env from SPARKLOGS_RE
 Or manually:
     OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf \
     OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="https://ingest-<region>.engine.sparklogs.app/v1/logs" \
-    OTEL_EXPORTER_OTLP_LOGS_HEADERS="Authorization=Bearer <AGENT-ID>:<AGENT-ACCESS-TOKEN>" \
+    OTEL_EXPORTER_OTLP_LOGS_HEADERS="Authorization=Bearer <INGEST-KEY-ID>:<INGEST-KEY-ACCESS-TOKEN>" \
     OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=gzip \
     OTEL_EXPORTER_OTLP_LOGS_TIMEOUT=25000 \
     python main.py

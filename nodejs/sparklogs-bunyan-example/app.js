@@ -12,8 +12,8 @@ import {
 // SparkLogs config from the standard env vars:
 //   SPARKLOGS_REGION             (valid region code, e.g. us|eu|...) — public-cloud shortcut, OR
 //   SPARKLOGS_INGEST_BASE_URI              — explicit base URI (QA / dev-cloud / on-prem)
-//   SPARKLOGS_AGENT_ID
-//   SPARKLOGS_AGENT_ACCESS_TOKEN
+//   SPARKLOGS_INGEST_KEY_ID
+//   SPARKLOGS_INGEST_KEY_ACCESS_TOKEN
 //
 // resolveEs8Endpoint rewrites the host to the `es8.` subdomain that serves the
 // Elasticsearch-bulk-compat endpoint — necessary because @elastic/elasticsearch

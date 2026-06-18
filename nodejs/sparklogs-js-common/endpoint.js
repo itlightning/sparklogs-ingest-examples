@@ -3,7 +3,7 @@
  *
  * These mirror the SPARKLOGS_RESOLVE_BASE_URI helper from
  * `mk/sparklogs-otel.mk`, so the same env vars (SPARKLOGS_INGEST_BASE_URI or
- * SPARKLOGS_REGION + SPARKLOGS_AGENT_ID + SPARKLOGS_AGENT_ACCESS_TOKEN) drive
+ * SPARKLOGS_REGION + SPARKLOGS_INGEST_KEY_ID + SPARKLOGS_INGEST_KEY_ACCESS_TOKEN) drive
  * every example regardless of which logging library it uses.
  */
 
@@ -79,11 +79,11 @@ export function resolveEs8Endpoint(baseUri) {
  * @returns {{ id: string, token: string, bearer: string }}
  */
 export function resolveAgentCredentials(env = process.env) {
-  const id = env.SPARKLOGS_AGENT_ID;
-  const token = env.SPARKLOGS_AGENT_ACCESS_TOKEN;
+  const id = env.SPARKLOGS_INGEST_KEY_ID;
+  const token = env.SPARKLOGS_INGEST_KEY_ACCESS_TOKEN;
   if (!id || !token) {
     throw new Error(
-      "Set SPARKLOGS_AGENT_ID and SPARKLOGS_AGENT_ACCESS_TOKEN before running. " +
+      "Set SPARKLOGS_INGEST_KEY_ID and SPARKLOGS_INGEST_KEY_ACCESS_TOKEN before running. " +
       "View or create an agent in the SparkLogs app under Configure → Agents."
     );
   }

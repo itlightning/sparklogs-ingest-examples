@@ -22,8 +22,8 @@ $ export SPARKLOGS_REGION="us"
 # ...or, for QA / dev-cloud / on-prem, set an explicit base URI instead:
 # $ export SPARKLOGS_INGEST_BASE_URI="https://es8.ingest-us.engine.sparklogs.app/"
 
-$ export SPARKLOGS_AGENT_ID="<AGENT-ID>"
-$ export SPARKLOGS_AGENT_ACCESS_TOKEN="<AGENT-ACCESS-TOKEN>"
+$ export SPARKLOGS_INGEST_KEY_ID="<INGEST-KEY-ID>"
+$ export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN="<INGEST-KEY-ACCESS-TOKEN>"
 
 $ npm install
 $ node app.js

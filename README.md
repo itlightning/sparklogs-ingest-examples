@@ -58,8 +58,8 @@ make mock-test
 # Run every example against real SparkLogs and emit a marker payload that QA
 # can confirm via the SparkLogs query API:
 export SPARKLOGS_REGION=us                       # or another valid region code
-export SPARKLOGS_AGENT_ID=<your-agent-id>
-export SPARKLOGS_AGENT_ACCESS_TOKEN=<your-agent-token>
+export SPARKLOGS_INGEST_KEY_ID=<your-agent-id>
+export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=<your-agent-token>
 make test
 
 # Or scope to one language:
@@ -72,8 +72,8 @@ To target a non-public SparkLogs instance (QA pointing at a locally-running clus
 export SPARKLOGS_INGEST_BASE_URI=http://localhost:8080/    # local QA instance
 # or
 export SPARKLOGS_INGEST_BASE_URI=https://ingest.dev-cloud.sparklogs.example/
-export SPARKLOGS_AGENT_ID=...
-export SPARKLOGS_AGENT_ACCESS_TOKEN=...
+export SPARKLOGS_INGEST_KEY_ID=...
+export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=...
 make test
 ```
 
