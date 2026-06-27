@@ -8,7 +8,7 @@ Runnable project for [Rust ingestion](https://sparklogs.com/docs/ingest/data-sou
 make mock-test
 ```
 
-**`make test`** (SparkLogs cloud) sets **`OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=gzip`**, **`OTEL_EXPORTER_OTLP_LOGS_HEADERS`** (Bearer token from **`SPARKLOGS_AGENT_ID`** and **`SPARKLOGS_AGENT_ACCESS_TOKEN`**), and the usual OTLP endpoint env vars via the shared Make file. This crate enables **`gzip-http`**. Flip **`FORCE_IPV4_OTLP_HTTP`** in **`src/main.rs`** when you need a **Reqwest** client bound to **IPv4** with a fixed **30s** timeout (e.g. broken local **IPv6** on **WSL**); leave it **`false`** to use the exporter’s default HTTP client and normal **OTEL** timeout env vars. For **`make mock-test`**, follow the mock env from **`mk/sparklogs-otel.mk`** (no SparkLogs cloud credentials required).
+**`make test`** (SparkLogs cloud) sets **`OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=gzip`**, **`OTEL_EXPORTER_OTLP_LOGS_HEADERS`** (Bearer token from **`SPARKLOGS_INGEST_KEY_ID`** and **`SPARKLOGS_INGEST_KEY_ACCESS_TOKEN`**), and the usual OTLP endpoint env vars via the shared Make file. This crate enables **`gzip-http`**. Flip **`FORCE_IPV4_OTLP_HTTP`** in **`src/main.rs`** when you need a **Reqwest** client bound to **IPv4** with a fixed **30s** timeout (e.g. broken local **IPv6** on **WSL**); leave it **`false`** to use the exporter’s default HTTP client and normal **OTEL** timeout env vars. For **`make mock-test`**, follow the mock env from **`mk/sparklogs-otel.mk`** (no SparkLogs cloud credentials required).
 
 Add **`zstd-http`** if you switch env to **`zstd`**.
 

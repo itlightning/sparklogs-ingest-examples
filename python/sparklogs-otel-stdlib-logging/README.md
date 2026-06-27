@@ -7,14 +7,14 @@ For the corresponding documentation page, see [SparkLogs Python ingestion guide]
 ## Prerequisites
 
 - Python 3.9+
-- A SparkLogs account with at least one agent provisioned (Configure → Agents in the SparkLogs app)
+- A SparkLogs account with at least one Ingest Key provisioned (Configure → Ingest Keys in the SparkLogs app)
 
 ## Run against real SparkLogs
 
 ```bash
 export SPARKLOGS_REGION=us           # or another valid region code
-export SPARKLOGS_AGENT_ID=...        # from Configure → Agents
-export SPARKLOGS_AGENT_ACCESS_TOKEN=...
+export SPARKLOGS_INGEST_KEY_ID=...        # from Configure → Ingest Keys
+export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=...
 
 make test
 ```
@@ -25,8 +25,8 @@ To target a non-public instance (QA, dev-cloud, on-prem), set `SPARKLOGS_INGEST_
 
 ```bash
 export SPARKLOGS_INGEST_BASE_URI=http://localhost:8080/
-export SPARKLOGS_AGENT_ID=...
-export SPARKLOGS_AGENT_ACCESS_TOKEN=...
+export SPARKLOGS_INGEST_KEY_ID=...
+export SPARKLOGS_INGEST_KEY_ACCESS_TOKEN=...
 make test
 ```
 

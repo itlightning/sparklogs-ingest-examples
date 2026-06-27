@@ -12,7 +12,7 @@
 #     OTEL_LOGS_TIMEOUT_MS = 25000    OTEL_EXPORTER_OTLP_LOGS_TIMEOUT used by examples
 #
 #   Guard target (.PHONY) — depend on this from your example's `test` target:
-#     _check_cloud_credentials    require SPARKLOGS_AGENT_ID, SPARKLOGS_AGENT_ACCESS_TOKEN,
+#     _check_cloud_credentials    require SPARKLOGS_INGEST_KEY_ID, SPARKLOGS_INGEST_KEY_ACCESS_TOKEN,
 #                                 and at least one of SPARKLOGS_INGEST_BASE_URI or
 #                                 SPARKLOGS_REGION.
 #
@@ -76,8 +76,8 @@ OTEL_LOGS_TIMEOUT_MS ?= 25000
 .PHONY: _check_cloud_credentials
 
 _check_cloud_credentials:
-	@if [ -z "$$SPARKLOGS_AGENT_ID" ] || [ -z "$$SPARKLOGS_AGENT_ACCESS_TOKEN" ]; then \
-	  echo "ERROR: set SPARKLOGS_AGENT_ID and SPARKLOGS_AGENT_ACCESS_TOKEN before 'make test'."; \
+	@if [ -z "$$SPARKLOGS_INGEST_KEY_ID" ] || [ -z "$$SPARKLOGS_INGEST_KEY_ACCESS_TOKEN" ]; then \
+	  echo "ERROR: set SPARKLOGS_INGEST_KEY_ID and SPARKLOGS_INGEST_KEY_ACCESS_TOKEN before 'make test'."; \
 	  exit 1; \
 	fi
 	@if [ -z "$$SPARKLOGS_INGEST_BASE_URI" ] && [ -z "$$SPARKLOGS_REGION" ]; then \
@@ -150,7 +150,7 @@ SPARKLOGS_CLOUD_ENV = \
   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
   OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf \
   OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="$${SPARKLOGS_INGEST_BASE_URI}v1/logs" \
-  OTEL_EXPORTER_OTLP_LOGS_HEADERS="Authorization=Bearer $${SPARKLOGS_AGENT_ID}:$${SPARKLOGS_AGENT_ACCESS_TOKEN}" \
+  OTEL_EXPORTER_OTLP_LOGS_HEADERS="Authorization=Bearer $${SPARKLOGS_INGEST_KEY_ID}:$${SPARKLOGS_INGEST_KEY_ACCESS_TOKEN}" \
   OTEL_EXPORTER_OTLP_LOGS_COMPRESSION=gzip \
   OTEL_EXPORTER_OTLP_LOGS_TIMEOUT=$(OTEL_LOGS_TIMEOUT_MS)
 

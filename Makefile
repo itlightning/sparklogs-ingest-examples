@@ -6,8 +6,8 @@
 #                       Verifies examples produce well-formed batches without
 #                       needing cloud credentials. CI-friendly.
 #   make test         - run every example against real SparkLogs. Requires:
-#                         SPARKLOGS_AGENT_ID
-#                         SPARKLOGS_AGENT_ACCESS_TOKEN
+#                         SPARKLOGS_INGEST_KEY_ID
+#                         SPARKLOGS_INGEST_KEY_ACCESS_TOKEN
 #                       and one of:
 #                         SPARKLOGS_INGEST_BASE_URI  (e.g. https://ingest-us.engine.sparklogs.app/
 #                                                    or http://localhost:8080/ for QA / dev-cloud)

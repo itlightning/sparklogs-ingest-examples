@@ -6,7 +6,7 @@ import { performStressTest } from '../sparklogs-js-common/stress.js';
 import {
   resolveIngestBaseUri,
   resolveEs8Endpoint,
-  resolveAgentCredentials,
+  resolveIngestKeyCredentials,
 } from '../sparklogs-js-common/endpoint.js';
 
 // ========================== SETUP TRANSPORT AND LOGGER ==========================
@@ -14,14 +14,14 @@ import {
 // SparkLogs config from the standard env vars:
 //   SPARKLOGS_REGION             (valid region code, e.g. us|eu|...) — public-cloud shortcut, OR
 //   SPARKLOGS_INGEST_BASE_URI              — explicit base URI (QA / dev-cloud / on-prem)
-//   SPARKLOGS_AGENT_ID
-//   SPARKLOGS_AGENT_ACCESS_TOKEN
+//   SPARKLOGS_INGEST_KEY_ID
+//   SPARKLOGS_INGEST_KEY_ACCESS_TOKEN
 //
 // resolveEs8Endpoint rewrites the host to the `es8.` subdomain that serves the
 // Elasticsearch-bulk-compat endpoint — necessary because @elastic/elasticsearch
 // v8 doesn't accept a path on the node URL (see endpoint.js for details).
 const node = resolveEs8Endpoint(resolveIngestBaseUri());
-const { bearer } = resolveAgentCredentials();
+const { bearer } = resolveIngestKeyCredentials();
 
 // Uses the microseconds part of the timestamp to ensure events are ordered properly for events logged on the same millisecond
 let logicalTimeCounter = 0, logicalTimeLastMs = ""

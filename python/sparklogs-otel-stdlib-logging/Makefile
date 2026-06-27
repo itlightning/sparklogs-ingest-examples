@@ -7,7 +7,7 @@
 #                     marker appears in the mock receiver's capture.
 #   make test       - run against real SparkLogs cloud (or whatever URL
 #                     SPARKLOGS_INGEST_BASE_URI points at). Requires:
-#                       SPARKLOGS_AGENT_ID, SPARKLOGS_AGENT_ACCESS_TOKEN
+#                       SPARKLOGS_INGEST_KEY_ID, SPARKLOGS_INGEST_KEY_ACCESS_TOKEN
 #                       and one of SPARKLOGS_INGEST_BASE_URI or SPARKLOGS_REGION
 #   make clean      - remove the venv.
 #
